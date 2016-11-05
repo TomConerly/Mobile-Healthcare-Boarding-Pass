@@ -18,12 +18,16 @@ public class CreateEvent extends AppCompatActivity {
         Intent intent = getIntent();
         String name = intent.getStringExtra("name");
         Log.d("CreateEvent", name);
+        slotId = intent.getIntExtra("slotId", -1);
 
         final TextView text = (TextView) findViewById(R.id.event_text);
         text.setText(name);
     }
+    int slotId;
 
     public void book(View view) {
+        Server s = Server.getInstance();
+        s.takeAppointment(slotId, 1337);
         Intent myIntent = new Intent(this, MainActivity.class);
         myIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(myIntent);

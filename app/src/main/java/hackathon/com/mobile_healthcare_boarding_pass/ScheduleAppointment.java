@@ -51,6 +51,7 @@ public class ScheduleAppointment extends AppCompatActivity {
 
                 Intent myIntent = new Intent(act, CreateEvent.class);
                 myIntent.putExtra("name", s);
+                myIntent.putExtra("slotId", currentListView.get(position).slotId);
                 act.startActivity(myIntent);
             }
         });
@@ -66,22 +67,11 @@ public class ScheduleAppointment extends AppCompatActivity {
         List<Server.Slot> free = s.getFreeAppointments();
         List<Event> events = new ArrayList<Event>();
         for (Server.Slot slot : free) {
-            long time = slot.expectedStartTime.getTime();
-            events.add(new Event(Color.argb(255, 169, 68, 65), time, makeName(time)));
+            events.add(new Event(Color.argb(255, 169, 68, 65), slot.expectedStartTime.getTime(), slot));
         }
         compactCalendarView.addEvents(events);
 
-        //loadEvents();
-        //loadEventsForYear(2017);
         compactCalendarView.invalidate();
-
-        logEventsByMonth(compactCalendarView);
-
-        // below line will display Sunday as the first day of the week
-        // compactCalendarView.setShouldShowMondayAsFirstDay(false);
-
-        // disable scrolling calendar
-        // compactCalendarView.shouldScrollMonth(false);
 
         //set initial title
         toolbar = getSupportActionBar();
@@ -106,15 +96,17 @@ public class ScheduleAppointment extends AppCompatActivity {
                     }
                 });
                 Log.d(TAG, "inside onclick " + dateFormatForDisplaying.format(dateClicked));
+
                 if (bookingsFromMap != null) {
+                    currentListView = new ArrayList<Server.Slot>();
                     Log.d(TAG, bookingsFromMap.toString());
                     mutableBookings.clear();
                     for (Event booking : bookingsFromMap) {
-                        mutableBookings.add((String) booking.getData());
+                        mutableBookings.add(makeName(booking.getTimeInMillis()));
+                        currentListView.add((Server.Slot)booking.getData());
                     }
                     adapter.notifyDataSetChanged();
                 }
-
             }
 
             @Override
@@ -123,13 +115,7 @@ public class ScheduleAppointment extends AppCompatActivity {
             }
         });
 
-        // uncomment below to show indicators above small indicator events
         compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(true);
-
-        // uncomment below to open onCreate
-        //openCalendarOnCreate(v);
-
-        //return v;
     }
 
     @Override
@@ -140,75 +126,8 @@ public class ScheduleAppointment extends AppCompatActivity {
         // toolbar.setTitle(dateFormatForMonth.format(new Date()));
     }
 
-    private void loadEvents() {
-        addEvents(-1, -1);
-        addEvents(Calendar.DECEMBER, -1);
-        addEvents(Calendar.AUGUST, -1);
-    }
-
-    private void loadEventsForYear(int year) {
-        addEvents(Calendar.DECEMBER, year);
-        addEvents(Calendar.AUGUST, year);
-    }
-
-    private void logEventsByMonth(CompactCalendarView compactCalendarView) {
-        currentCalender.setTime(new Date());
-        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        currentCalender.set(Calendar.MONTH, Calendar.AUGUST);
-        List<String> dates = new ArrayList<>();
-        for (Event e : compactCalendarView.getEventsForMonth(new Date())) {
-            dates.add(dateFormatForDisplaying.format(e.getTimeInMillis()));
-        }
-        Log.d(TAG, "Events for Aug with simple date formatter: " + dates);
-        Log.d(TAG, "Events for Aug month using default local and timezone: " + compactCalendarView.getEventsForMonth(currentCalender.getTime()));
-    }
-
-    private void addEvents(int month, int year) {
-        currentCalender.setTime(new Date());
-        currentCalender.set(Calendar.DAY_OF_MONTH, 1);
-        Date firstDayOfMonth = currentCalender.getTime();
-        for (int i = 0; i < 6; i++) {
-            currentCalender.setTime(firstDayOfMonth);
-            if (month > -1) {
-                currentCalender.set(Calendar.MONTH, month);
-            }
-            if (year > -1) {
-                currentCalender.set(Calendar.ERA, GregorianCalendar.AD);
-                currentCalender.set(Calendar.YEAR, year);
-            }
-            currentCalender.add(Calendar.DATE, i);
-            setToMidnight(currentCalender);
-            currentCalender.add(Calendar.HOUR_OF_DAY, 9 + i);
-            long timeInMillis = currentCalender.getTimeInMillis();
-
-            List<Event> events = getEvents(timeInMillis, i);
-
-            compactCalendarView.addEvents(events);
-        }
-    }
-
     private String makeName(long timeInMillis) {
         return "Appointment at " + dateFormatForDisplaying.format(new Date(timeInMillis));
     }
-    private List<Event> getEvents(long timeInMillis, int day) {
-        if (day < 2) {
-            return Arrays.asList(new Event(Color.argb(255, 169, 68, 65), timeInMillis, makeName(timeInMillis)));
-        } else if ( day > 2 && day <= 4) {
-            return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, makeName(timeInMillis)),
-                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, makeName(timeInMillis)));
-        } else {
-            return Arrays.asList(
-                    new Event(Color.argb(255, 169, 68, 65), timeInMillis, makeName(timeInMillis) ),
-                    new Event(Color.argb(255, 100, 68, 65), timeInMillis, makeName(timeInMillis)),
-                    new Event(Color.argb(255, 70, 68, 65), timeInMillis, makeName(timeInMillis)));
-        }
-    }
-
-    private void setToMidnight(Calendar calendar) {
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-    }
+    List<Server.Slot> currentListView = new ArrayList<Server.Slot>();
 }
