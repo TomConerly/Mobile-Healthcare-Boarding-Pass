@@ -68,8 +68,17 @@ public class ScheduleAppointment extends AppCompatActivity {
         // below allows you to configure colors for the current day the user has selected
         // compactCalendarView.setCurrentSelectedDayBackgroundColor(getResources().getColor(R.color.dark_red));
 
-        loadEvents();
-        loadEventsForYear(2017);
+        Server s = Server.getInstance();
+        List<Server.Slot> free = s.getFreeAppointments();
+        List<Event> events = new ArrayList<Event>();
+        for (Server.Slot slot : free) {
+            long time = slot.expectedStartTime.getTime();
+            events.add(new Event(Color.argb(255, 169, 68, 65), time, makeName(time)));
+        }
+        compactCalendarView.addEvents(events);
+
+        //loadEvents();
+        //loadEventsForYear(2017);
         compactCalendarView.invalidate();
 
         logEventsByMonth(compactCalendarView);
