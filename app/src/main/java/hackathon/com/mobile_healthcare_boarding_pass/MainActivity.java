@@ -20,7 +20,7 @@ import org.json.JSONObject;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +38,22 @@ public class MainActivity extends AppCompatActivity {
         toolbar = getSupportActionBar();
         toolbar.setTitle("Your Appointments");
 
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        my_slots.clear();
+                        my_slots.addAll(Server.getInstance().getMyAppointments(1337));
+                        sortMySlots();
+                        my_slots_adapter.notifyDataSetChanged();
+                    }
+                });
+            }
+
+        },0,1000);
     }
 
     @Override
