@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         my_slots.clear();
+                        Server.getInstance().updateSlotsFromServer();
                         my_slots.addAll(Server.getInstance().getMyAppointments(1337));
                         sortMySlots();
                         my_slots_adapter.notifyDataSetChanged();

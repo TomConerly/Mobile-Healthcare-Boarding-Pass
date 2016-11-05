@@ -69,6 +69,7 @@ public class ConnectExampleActivity extends Activity {
                                 e.printStackTrace();
                             }
                         }
+
                     };
                     myClientTask.execute();
                 }};

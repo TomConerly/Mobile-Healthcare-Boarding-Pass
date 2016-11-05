@@ -1,6 +1,7 @@
 package hackathon.com.mobile_healthcare_boarding_pass;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,6 +83,7 @@ public class JSONRequestTask extends AsyncTask<Void, Void, Void> {
         try {
             onSuccessfulRequest(new JSONObject(response));
         } catch (JSONException e) {
+            Log.d("tag", "failed to parse response: " + response);
             onFailedRequest();
         }
     }

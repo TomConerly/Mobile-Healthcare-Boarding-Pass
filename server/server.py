@@ -57,13 +57,14 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 self.request.sendall(bytes("Booked successfully!\n", 'utf-8'))
             else:
                 self.request.sendall(bytes("Appointment not available.\n", 'utf-8'))
-        elif request.action == 'list':
+        elif request.action == 'list_slots':
             with lock:
                 all_list = slots.values()
             result = []
             for x in all_list:
                 result.append(x.toJSON(request.patientId))
-            self.request.sendall(bytes(json.dumps(result), 'utf-8'))
+            self.reply({"slots": result})
+
         elif request.action == 'test':
             self.reply({"test": "asa"})
         elif request.action == 'cancel':

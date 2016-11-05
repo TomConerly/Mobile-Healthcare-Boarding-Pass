@@ -1,5 +1,8 @@
 package hackathon.com.mobile_healthcare_boarding_pass;
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +25,57 @@ public class Server {
         Date expectedEndTime;
         String doctor;
     }
+
+    void updateSlotsFromServer() {
+        JSONObject obj = null;
+        try {
+            obj = new JSONObject();
+            obj.put("action", "list_slots");
+            obj.put("patientId", 1); // TODO(szymon): extract.
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JSONRequestTask myClientTask = new JSONRequestTask(Constants.SERVER_ADDR, Constants.SERVER_PORT, obj) {
+            @Override
+            protected void onSuccessfulRequest(JSONObject response) {
+                super.onSuccessfulRequest(response);
+                allSlots.clear();
+                Log.d("tag", "hello!");
+                try {
+                    JSONArray slots = response.getJSONArray("slots");
+                    for (int i = 0; i < slots.length(); ++i) {
+                        allSlots.add(parseSlot(slots.getJSONObject(i)));
+                    }
+                    Log.d("tag", "parsed " + allSlots.size() + " slots");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            protected void onFailedRequest() {
+                Log.d("tag", "doom!");
+            }
+        };
+        myClientTask.execute();
+    }
+
+    private Slot parseSlot(JSONObject obj) {
+        try {
+            Slot slot = new Slot();
+            slot.slotId = obj.getInt("slotId");
+            slot.patientId = obj.getInt("patientId");
+            slot.scheduledStartTime = new Date(obj.getLong("scheduledStartDate"));
+            slot.expectedStartTime = new Date(obj.getLong("expectedStartTime"));
+            slot.scheduledEndTime = new Date(obj.getLong("scheduledEndTime"));
+            slot.expectedEndTime = new Date(obj.getLong("expectedEndTime"));
+            slot.doctor = obj.getString("doctor");
+            return slot;
+        } catch (JSONException e) {
+            return null;
+        }
+    }
+
 
     List<Slot> getFreeAppointments() {
         ArrayList<Slot> res = new ArrayList<Slot>();
@@ -120,22 +174,5 @@ public class Server {
             instance = new Server();
         }
         return instance;
-    }
-
-    private Slot parseSlot(JSONObject obj) {
-        try {
-            Slot slot = new Slot();
-            slot.slotId = obj.getInt("slotId");
-            slot.patientId = obj.getInt("patientId");
-            slot.scheduledStartTime = new Date(obj.getLong("scheduledStartDate"));
-            slot.expectedStartTime = new Date(obj.getLong("expectedStartTime"));
-            slot.scheduledEndTime = new Date(obj.getLong("scheduledEndTime"));
-            slot.expectedEndTime = new Date(obj.getLong("expectedEndTime"));
-            slot.doctor = obj.getString("doctor");
-            return slot;
-        } catch (JSONException e) {
-            return null;
-        }
-
     }
 }
