@@ -21,7 +21,8 @@
             android:layout_height="0dip"
             android:layout_weight="1"
             android:id="@+id/appointment_list"
-            android:dividerHeight="0dp" />
+            android:dividerHeight="0dp"
+            android:divider="@null" />
 
         <LinearLayout
             android:orientation="horizontal"
