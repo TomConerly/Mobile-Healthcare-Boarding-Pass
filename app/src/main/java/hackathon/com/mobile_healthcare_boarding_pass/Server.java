@@ -148,6 +148,37 @@ public class Server {
         for (Slot s : allSlots) {
             if (s.slotId == slotId && s.patientId == patientId) {
                 s.patientId = FREE;
+
+                JSONObject obj = null;
+                try {
+                    obj = new JSONObject();
+                    obj.put("action", "cancel_slot");
+                    obj.put("patientId", patientId);
+                    obj.put("slotId", slotId);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                JSONRequestTask myClientTask = new JSONRequestTask(Constants.SERVER_ADDR, Constants.SERVER_PORT, obj) {
+                    @Override
+                    protected void onSuccessfulRequest(JSONObject response) {
+                        super.onSuccessfulRequest(response);
+                        int success = 0;
+                        try {
+                            success = response.getInt("success");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (success == 1) {
+                            Toast.makeText(MainActivity.self, "Successfully Cancelled slot.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.self, "Failed to cancel the slot.", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                };
+                myClientTask.execute();
+
+
             }
         }
     }

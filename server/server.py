@@ -67,17 +67,17 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 self.reply({"success": 0})
         elif request.action == 'test':
             self.reply({"test": "asa"})
-        elif request.action == 'cancel':
+        elif request.action == 'cancel_slot':
             with lock:
                 response = cancelAttempt(request.patientId, request.slotId)
             if response:
-                self.request.sendall(bytes("Cancelled successfully!\n", 'utf-8'))
+                self.reply({"success": 1})
                 with lock:
                     for slot in getInterestedSlots(request.slotId):
                         if slot.patientId in patients:
                             patients[slot.patientId].notify('Earlier appointment became available!')
             else:
-                self.request.sendall(bytes("Cancellation failed.\n", 'utf-8'))
+                self.reply({"success": 0})
         elif request.action == 'setToken':
             if request.patientId not in patients:
                 patients[request.patientId] = Patient(request.patientId)
