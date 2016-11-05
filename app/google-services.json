@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "758058103650",
+    "firebase_url": "https://mobilehealthcareboarding-95e6c.firebaseio.com",
+    "project_id": "mobilehealthcareboarding-95e6c",
+    "storage_bucket": "mobilehealthcareboarding-95e6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758058103650:android:cdcd41a59d7bda41",
+        "android_client_info": {
+          "package_name": "hackathon.com.mobile_healthcare_boarding_pass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758058103650-3kg45a2ehvrt8b18vuqn6pghhd7ikt8r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD290d1J-4NfjBEVmp5B5Uu2l48EQuaWlU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
