@@ -21,9 +21,9 @@ class Patient(object):
         self.patientId = patientId
         self.token = ''
 
-    def notify(message):
-        if token != '':
-            send_notification.sendMessage(message, token)
+    def notify(self, message):
+        if self.token != '':
+            send_notification.sendMessage(message, self.token)
 
 class Request(object):
     def __init__(self, j):
@@ -64,7 +64,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
             for x in all_list:
                 result.append(x.toJSON(request.patientId))
             self.reply({"slots": result})
-
         elif request.action == 'test':
             self.reply({"test": "asa"})
         elif request.action == 'cancel':

@@ -25,11 +25,26 @@
             android:id="@+id/button2"
             android:onClick="showNotification" />
 
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:ems="10"
+            android:id="@+id/patiendIdBox" />
+
+        <Button
+            android:text="Login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/loginButton"
+            android:onClick="login" />
+
         <TextView
             android:text="TextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/textView2" />
+
     </LinearLayout>
 
 </RelativeLayout>
