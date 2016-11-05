@@ -15,13 +15,7 @@ import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class ScheduleAppointment extends AppCompatActivity {
 
@@ -99,6 +93,18 @@ public class ScheduleAppointment extends AppCompatActivity {
             public void onDayClick(Date dateClicked) {
                 toolbar.setTitle(dateFormatForMonth.format(dateClicked));
                 List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
+                Collections.sort(bookingsFromMap, new Comparator<Event>() {
+                    @Override
+                    public int compare(Event e1, Event e2) {
+                        if (e1.getTimeInMillis() < e2.getTimeInMillis()) {
+                            return -1;
+                        } else if (e1.getTimeInMillis() > e2.getTimeInMillis()) {
+                            return 1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                });
                 Log.d(TAG, "inside onclick " + dateFormatForDisplaying.format(dateClicked));
                 if (bookingsFromMap != null) {
                     Log.d(TAG, bookingsFromMap.toString());
