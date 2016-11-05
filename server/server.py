@@ -4,6 +4,7 @@ import time
 import copy
 import json
 from datetime import datetime
+import sys
 
 lock = threading.Lock()
 
@@ -29,10 +30,13 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-        self.data = self.request.recv(1024).strip()
+        #self.data = self.request.recv(1024).strip()
         with lock:
             print("Connection from {}", self.client_address[0])
+            sys.stdout.flush()
         self.request.sendall(bytes("siemanko\n", 'utf-8'))
+        # self.request.sendall(self.data)
+        return
         request = Request(self.data)
         if request.action == 'book':
             with lock:
@@ -103,7 +107,6 @@ class Slot(object):
 
 if __name__ == "__main__":
     t_server = threading.Thread(target=server_thread)
-    t_server.daemon = True
     t_server.start()
     t_tick_loop = threading.Thread(target=tick_loop_thread)
     t_tick_loop.start()
