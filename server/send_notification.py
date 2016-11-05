@@ -11,7 +11,7 @@ def sendMessage(message, to, uber=False):
     data = {
         'to': to,
         'notification' : {
-            'title' : 'Health Boarding Pass'
+            'title' : 'Health Boarding Pass',
             'body': message,
         },
         'data': {
