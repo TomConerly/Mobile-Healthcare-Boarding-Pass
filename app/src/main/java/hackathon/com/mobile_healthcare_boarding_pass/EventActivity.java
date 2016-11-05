@@ -88,6 +88,10 @@ public class EventActivity extends AppCompatActivity {
         final int position = listView.getPositionForView(parentRow);
         Log.d("tconerly", String.format("checked %d %d", position, checked ? 1 : 0));
     }
+    public void cancel(View view) {
+        Server.getInstance().cancel(slot.slotId, 1337);
+        finish();
+    }
 
     private void initializeAppointmentList() {
         Log.d("tconerly", "initializeAppointmentList");

@@ -113,7 +113,13 @@ public class Server {
         }
         return false;
     }
-
+    void cancel(int slotId, int patientId) {
+        for (Slot s : allSlots) {
+            if (s.slotId == slotId && s.patientId == patientId) {
+                s.patientId = FREE;
+            }
+        }
+    }
 
 
     private static Server instance = null;
