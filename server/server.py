@@ -5,6 +5,7 @@ import copy
 import json
 from datetime import datetime
 import sys
+import json
 
 lock = threading.Lock()
 
@@ -18,7 +19,7 @@ class Patient(object):
 
 class Request(object):
     def __init__(self, j):
-        self.__dict__ = json.loads(j)
+        self.__dict__ = json.loads(j.decode("utf-8"))
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -30,20 +31,26 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-        #self.data = self.request.recv(1024).strip()
+        data = self.request.recv(1024).strip()
         with lock:
             print("Connection from {}", self.client_address[0])
             sys.stdout.flush()
-        self.request.sendall(bytes("siemanko\n", 'utf-8'))
-        # self.request.sendall(self.data)
-        return
-        request = Request(self.data)
+
+        request = Request(data)
+
+        print("action: ", request.action)
         if request.action == 'book':
             with lock:
                 book_attempt(request.patientId, request.slotId)
         elif request.action == 'list':
             with lock:
                 all_list = slots.values()
+        elif request.action == 'test':
+            self.reply({"test": "siemanko"})
+
+    def reply(self, response):
+        self.request.sendall(bytes(json.dumps(response), 'utf-8'))
+
 
 def server_thread():
     HOST, PORT = '', 12345

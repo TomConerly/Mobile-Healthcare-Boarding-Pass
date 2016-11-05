@@ -3,24 +3,30 @@ package hackathon.com.mobile_healthcare_boarding_pass;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Date;
 
 public class ConnectExampleActivity extends Activity {
-
     TextView textResponse;
     EditText editTextAddress, editTextPort;
     Button buttonConnect, buttonClear;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,74 +52,25 @@ public class ConnectExampleActivity extends Activity {
 
                 @Override
                 public void onClick(View arg0) {
-                    MyClientTask myClientTask = new MyClientTask(Constants.SERVER_ADDR, Constants.SERVER_PORT);
-                    myClientTask.execute();
-                }};
-
-    public class MyClientTask extends AsyncTask<Void, Void, Void> {
-
-        String dstAddress;
-        int dstPort;
-        String response = "";
-
-        MyClientTask(String addr, int port){
-            dstAddress = addr;
-            dstPort = port;
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-
-            Socket socket = null;
-
-            try {
-                socket = new Socket(dstAddress, dstPort);
-
-                ByteArrayOutputStream byteArrayOutputStream =
-                        new ByteArrayOutputStream(1024);
-                byte[] buffer = new byte[1024];
-
-                int bytesRead;
-                InputStream inputStream = socket.getInputStream();
-
-    /*
-     * notice:
-     * inputStream.read() will block if no data return
-     */
-                while ((bytesRead = inputStream.read(buffer)) != -1){
-                    byteArrayOutputStream.reset();
-                    byteArrayOutputStream.write(buffer, 0, bytesRead);
-                    response += byteArrayOutputStream.toString("UTF-8");
-                }
-
-            } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                response = "UnknownHostException: " + e.toString();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                response = "IOException: " + e.toString();
-            }finally{
-                if(socket != null){
+                    JSONObject obj = null;
                     try {
-                        socket.close();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
+                        obj = new JSONObject();
+                        obj.put("action", "test");
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            Date time = new Date((long)(1478364176.447885) * 1000);
-            textResponse.setText(response + "\n DONE" + "\n " + time.toString());
-            super.onPostExecute(result);
-        }
-
-    }
+                    JSONRequestTask myClientTask = new JSONRequestTask(Constants.SERVER_ADDR, Constants.SERVER_PORT, obj) {
+                        @Override
+                        protected void onSuccessfulRequest(JSONObject response) {
+                            super.onSuccessfulRequest(response);
+                            try {
+                                Log.d("tag", "LIST " + response.getString("test"));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    };
+                    myClientTask.execute();
+                }};
 
 }
