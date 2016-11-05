@@ -1,6 +1,7 @@
 package hackathon.com.mobile_healthcare_boarding_pass;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,14 +14,17 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
+    private ActionBar toolbar;
     private List<Server.Slot> my_slots;
     ArrayAdapter<Server.Slot> my_slots_adapter;
 
@@ -30,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeAppointmentList();
+
+        toolbar = getSupportActionBar();
+        toolbar.setTitle("Your Appointments");
+
     }
 
     @Override
@@ -37,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         my_slots.clear();
         my_slots.addAll(Server.getInstance().getMyAppointments(1337));
+        sortMySlots();
         Log.d("siema", "slots: " + my_slots.size());
         my_slots_adapter.notifyDataSetChanged();
 
@@ -54,19 +63,24 @@ public class MainActivity extends AppCompatActivity {
         // myIntent.putExtra("key", "test"); //Optional parameters
         startActivity(myIntent);
     }
-
     public void switchToConnectExample(View view) {
         Intent myIntent = new Intent(this, ConnectExampleActivity.class);
         // myIntent.putExtra("key", "test"); //Optional parameters
         startActivity(myIntent);
     }
-
-
+    private void sortMySlots() {
+        Collections.sort(my_slots, new Comparator<Server.Slot>() {
+            @Override
+            public int compare(Server.Slot e1, Server.Slot e2) {
+                return e1.scheduledStartTime.compareTo(e2.scheduledStartTime);
+            }
+        });
+    }
     private void initializeAppointmentList() {
         ListView appointment_list = (ListView)findViewById(R.id.appointment_list);
 
-
         my_slots = Server.getInstance().getMyAppointments(1337);
+        sortMySlots();
 
         my_slots_adapter = new ArrayAdapter<Server.Slot>(this, R.layout.appointment_slot, my_slots) {
             @Override
