@@ -10,15 +10,27 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="hackathon.com.mobile_healthcare_boarding_pass.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/text"
-        android:text="Hello World!" />
-    <Button
-        android:layout_below="@+id/text"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
-        android:text="Schedule"
-        android:onClick="schedule" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:weightSum="1">
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:id="@+id/appointment_list" />
+
+        <Button
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Schedule"
+            android:onClick="schedule"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:id="@+id/schedule_button"
+            android:layout_alignParentEnd="true"/>
+    </LinearLayout>
+
 </RelativeLayout>
