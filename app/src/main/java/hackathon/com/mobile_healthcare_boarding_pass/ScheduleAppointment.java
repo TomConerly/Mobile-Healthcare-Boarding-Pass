@@ -69,6 +69,7 @@ public class ScheduleAppointment extends AppCompatActivity {
         List<Server.Slot> free = s.getFreeAppointments();
         List<Event> events = new ArrayList<Event>();
         for (Server.Slot slot : free) {
+            Log.d("tconerly", makeName(slot.expectedStartTime.getTime()));
             events.add(new Event(Color.argb(255, 169, 68, 65), slot.expectedStartTime.getTime(), slot));
         }
         compactCalendarView.addEvents(events);
@@ -106,6 +107,7 @@ public class ScheduleAppointment extends AppCompatActivity {
                     mutableBookings.clear();
                     for (Event booking : bookingsFromMap) {
                         mutableBookings.add(makeName(booking.getTimeInMillis()));
+                        Log.d("tconerly", makeName(booking.getTimeInMillis()));
                         currentListView.add((Server.Slot)booking.getData());
                     }
                     adapter.notifyDataSetChanged();

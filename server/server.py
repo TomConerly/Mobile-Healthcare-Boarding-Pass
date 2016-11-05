@@ -3,10 +3,11 @@ import socketserver
 import time
 import copy
 import json
-from datetime import datetime
+import datetime
 import sys
 import json
 import send_notification
+import random
 
 lock = threading.Lock()
 
@@ -155,11 +156,34 @@ class Slot(object):
         data['provider'] = self.provider
         return data
 
+def addSlot(s):
+    slots[s.slotId] = s
+
+def initSlots():
+    halfhour = datetime.timedelta(minutes=30)
+    t = datetime.datetime(2016, 11, 5, 18)
+    s = Slot(t, t + halfhour)
+    s.expectedStartTime += halfhour
+    s.expectedEndTime += halfhour
+    s.assignPatient(1337)
+    slots[s.slotId] = s
+
+    random.seed(10)
+    for i in range(10):
+        t = datetime.datetime(2016, 11, 15 + random.randrange(15), random.randrange(9, 18))
+        s = Slot(t, t + halfhour)
+        s.patientId = FREE
+        slots[s.slotId] = s
+
+    for i in range(10):
+        t = datetime.datetime(2016, 11, 5 + random.randrange(20), random.randrange(9, 18))
+        s = Slot(t, t + halfhour)
+        s.patientId = BOOKED
+        slots[s.slotId] = s
 
 if __name__ == "__main__":
+    initSlots()
     t_server = threading.Thread(target=serverThread)
     t_server.start()
     t_tick_loop = threading.Thread(target=tickLoopThread)
     t_tick_loop.start()
-    s = Slot(datetime.now(), datetime.now())
-    print(s.toJSON(0))

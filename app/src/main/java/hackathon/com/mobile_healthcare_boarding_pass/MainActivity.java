@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         my_slots.clear();
+        Server.getInstance().updateSlotsFromServer();
         my_slots.addAll(Server.getInstance().getMyAppointments(1337));
         sortMySlots();
         Log.d("siema", "slots: " + my_slots.size());
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void initializeAppointmentList() {
         ListView appointment_list = (ListView)findViewById(R.id.appointment_list);
-
+        Server.getInstance().updateSlotsFromServer();
         my_slots = Server.getInstance().getMyAppointments(1337);
         sortMySlots();
 

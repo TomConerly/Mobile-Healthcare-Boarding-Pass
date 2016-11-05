@@ -31,7 +31,7 @@ public class Server {
         try {
             obj = new JSONObject();
             obj.put("action", "list_slots");
-            obj.put("patientId", 1); // TODO(szymon): extract.
+            obj.put("patientId", 1337);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -65,11 +65,11 @@ public class Server {
             Slot slot = new Slot();
             slot.slotId = obj.getInt("slotId");
             slot.patientId = obj.getInt("patientId");
-            slot.scheduledStartTime = new Date(obj.getLong("scheduledStartDate"));
-            slot.expectedStartTime = new Date(obj.getLong("expectedStartTime"));
-            slot.scheduledEndTime = new Date(obj.getLong("scheduledEndTime"));
-            slot.expectedEndTime = new Date(obj.getLong("expectedEndTime"));
-            slot.doctor = obj.getString("doctor");
+            slot.scheduledStartTime = new Date(1000 * obj.getLong("scheduledStartTime"));
+            slot.expectedStartTime = new Date(1000 * obj.getLong("expectedStartTime"));
+            slot.scheduledEndTime = new Date(1000 * obj.getLong("scheduledEndTime"));
+            slot.expectedEndTime = new Date(1000 * obj.getLong("expectedEndTime"));
+            slot.doctor = obj.getString("provider");
             return slot;
         } catch (JSONException e) {
             return null;
@@ -82,6 +82,7 @@ public class Server {
         for (Slot s : allSlots)
             if (s.patientId == FREE)
                 res.add(s);
+        Log.d("tconerly", "num free" + Integer.toString(res.size()));
         return res;
     }
     List<Slot> getMyAppointments(int patientId) {
@@ -89,6 +90,7 @@ public class Server {
         for (Slot s : allSlots)
             if (s.patientId == patientId)
                 res.add(s);
+        Log.d("tconerly", "num mine" + Integer.toString(res.size()));
         return res;
     }
     // Slots that are booked by someone else
@@ -97,6 +99,7 @@ public class Server {
         for (Slot s : allSlots)
             if (s.patientId == BOOKED)
                 res.add(s);
+        Log.d("tconerly", "num booked" + Integer.toString(res.size()));
         return res;
     }
     boolean takeAppointment(int slotId, int patientId) {
