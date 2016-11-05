@@ -24,6 +24,8 @@ import java.util.*;
 
 
 public class MainActivity extends AppCompatActivity {
+    static MainActivity self;
+
     private ActionBar toolbar;
     private List<Server.Slot> my_slots;
     ArrayAdapter<Server.Slot> my_slots_adapter;
@@ -34,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeAppointmentList();
+
+        self = this;
 
         toolbar = getSupportActionBar();
         toolbar.setTitle("Your Appointments");

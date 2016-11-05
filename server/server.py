@@ -51,20 +51,20 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         request = Request(data)
 
         print("action: ", request.action)
-        if request.action == 'book':
-            with lock:
-                response = bookAttempt(request.patientId, request.slotId)
-            if response:
-                self.request.sendall(bytes("Booked successfully!\n", 'utf-8'))
-            else:
-                self.request.sendall(bytes("Appointment not available.\n", 'utf-8'))
-        elif request.action == 'list_slots':
+
+        if request.action == 'list_slots':
             with lock:
                 all_list = slots.values()
             result = []
             for x in all_list:
                 result.append(x.toJSON(request.patientId))
             self.reply({"slots": result})
+        elif request.action == 'take_slot':
+            response = bookAttempt(request.patientId, request.slotId)
+            if response:
+                self.reply({"success": 1})
+            else:
+                self.reply({"success": 0})
         elif request.action == 'test':
             self.reply({"test": "asa"})
         elif request.action == 'cancel':

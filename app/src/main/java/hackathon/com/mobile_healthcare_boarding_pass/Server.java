@@ -1,6 +1,7 @@
 package hackathon.com.mobile_healthcare_boarding_pass;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -107,6 +108,36 @@ public class Server {
             if (s.slotId == slotId) {
                 if (s.patientId == FREE) {
                     s.patientId = patientId;
+
+                    JSONObject obj = null;
+                    try {
+                        obj = new JSONObject();
+                        obj.put("action", "take_slot");
+                        obj.put("patientId", patientId);
+                        obj.put("slotId", slotId);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    JSONRequestTask myClientTask = new JSONRequestTask(Constants.SERVER_ADDR, Constants.SERVER_PORT, obj) {
+                        @Override
+                        protected void onSuccessfulRequest(JSONObject response) {
+                            super.onSuccessfulRequest(response);
+                            int success = 0;
+                            try {
+                                success = response.getInt("success");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            if (success == 1) {
+                                Toast.makeText(MainActivity.self, "Booking successful.", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(MainActivity.self, "Failed to book the slot.", Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+                    };
+                    myClientTask.execute();
+
                     return true;
                 }
             }
