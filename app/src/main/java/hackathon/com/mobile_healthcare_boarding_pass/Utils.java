@@ -12,11 +12,11 @@ public class Utils {
         long hours = minutes / 60;
         long days = hours / 24;
         if (days > 0) {
-            return "in " + days + " days";
+            return "" + days + " days";
         } else if (hours > 0) {
-            return "in " + hours + " hours";
+            return "" + hours + " hours";
         } else if (minutes> 0) {
-            return "in " + minutes + " minutes";
+            return "" + minutes + " minutes";
         } else {
             return "less than a minute";
         }

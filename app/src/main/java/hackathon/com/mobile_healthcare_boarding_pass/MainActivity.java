@@ -52,8 +52,20 @@ public class MainActivity extends AppCompatActivity {
                 TextView appointment_time = (TextView)res.findViewById(R.id.appointment_time);
                 Server.Slot slot = getItem(position);
                 appointment_name.setText("Appointment with " + slot.doctor);
-                String eta = Utils.pretty_print_duration(slot.expectedStartTime.getTime() - (new Date()).getTime());
-                appointment_time.setText(eta);
+                String eta = "in " + Utils.pretty_print_duration(slot.expectedStartTime.getTime() - (new Date()).getTime());
+
+                long expected_time = slot.expectedStartTime.getTime();
+                long scheduled_time = slot.scheduledStartTime.getTime();
+                long diff = Math.abs(expected_time - scheduled_time);
+                if (diff > 60 * 1000) {
+                    if (scheduled_time < expected_time) {
+                        eta += " (delayed by " + Utils.pretty_print_duration(diff) + ")";
+                    } else {
+                        eta += " ("  + Utils.pretty_print_duration(diff) + " earlier)";
+
+                    }
+                }
+                appointment_time.setText( eta);
                 return res;
             }
         };

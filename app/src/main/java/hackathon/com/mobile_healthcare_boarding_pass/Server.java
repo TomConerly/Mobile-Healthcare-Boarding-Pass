@@ -88,9 +88,11 @@ public class Server {
             Calendar c = randomTime(r);
             Slot s = new Slot();
             s.scheduledStartTime = c.getTime();
+            c.add(Calendar.MINUTE, 5);
             s.expectedStartTime = c.getTime();
             c.add(Calendar.MINUTE, 30);
             s.scheduledEndTime = c.getTime();
+            c.add(Calendar.MINUTE, 5);
             s.expectedEndTime = c.getTime();
             s.doctor = "Doctor Mc. Doctorface";
             s.patientId = 1337;
