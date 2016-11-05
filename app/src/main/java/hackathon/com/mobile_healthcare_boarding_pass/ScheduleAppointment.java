@@ -21,8 +21,8 @@ public class ScheduleAppointment extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private Calendar currentCalender = Calendar.getInstance(Locale.getDefault());
-    private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("hh:mm a", Locale.getDefault());
-    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM - yyyy", Locale.getDefault());
+    private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("hh:mm a 'on' MMM dd", Locale.getDefault());
+    private SimpleDateFormat dateFormatForMonth = new SimpleDateFormat("MMM yyyy", Locale.getDefault());
     private boolean shouldShow = false;
     private CompactCalendarView compactCalendarView;
     private ActionBar toolbar;
@@ -51,7 +51,9 @@ public class ScheduleAppointment extends AppCompatActivity {
 
                 Intent myIntent = new Intent(act, CreateEvent.class);
                 myIntent.putExtra("name", s);
-                myIntent.putExtra("slotId", currentListView.get(position).slotId);
+                Server.Slot slot = currentListView.get(position);
+                myIntent.putExtra("slotId", slot.slotId);
+                myIntent.putExtra("doctor", slot.doctor);
                 act.startActivity(myIntent);
             }
         });
@@ -72,6 +74,7 @@ public class ScheduleAppointment extends AppCompatActivity {
         compactCalendarView.addEvents(events);
 
         compactCalendarView.invalidate();
+        compactCalendarView.setDayColumnNames(new String[]{"M", "Tu", "W", "Th", "F", "Sa", "Su"});
 
         //set initial title
         toolbar = getSupportActionBar();
@@ -81,7 +84,7 @@ public class ScheduleAppointment extends AppCompatActivity {
         compactCalendarView.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
-                toolbar.setTitle(dateFormatForMonth.format(dateClicked));
+                toolbar.setTitle("Appointments for " + dateFormatForMonth.format(dateClicked));
                 List<Event> bookingsFromMap = compactCalendarView.getEvents(dateClicked);
                 Collections.sort(bookingsFromMap, new Comparator<Event>() {
                     @Override
@@ -111,7 +114,7 @@ public class ScheduleAppointment extends AppCompatActivity {
 
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-                toolbar.setTitle(dateFormatForMonth.format(firstDayOfNewMonth));
+                toolbar.setTitle("Appointments for " + dateFormatForMonth.format(firstDayOfNewMonth));
             }
         });
 
@@ -121,7 +124,7 @@ public class ScheduleAppointment extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        toolbar.setTitle(dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
+        toolbar.setTitle("Appointments for " + dateFormatForMonth.format(compactCalendarView.getFirstDayOfCurrentMonth()));
         // Set to current day on resume to set calendar to latest day
         // toolbar.setTitle(dateFormatForMonth.format(new Date()));
     }

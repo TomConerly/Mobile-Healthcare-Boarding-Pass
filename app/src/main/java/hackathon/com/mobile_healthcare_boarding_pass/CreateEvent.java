@@ -1,6 +1,7 @@
 package hackathon.com.mobile_healthcare_boarding_pass;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class CreateEvent extends AppCompatActivity {
+    private ActionBar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,9 +21,14 @@ public class CreateEvent extends AppCompatActivity {
         String name = intent.getStringExtra("name");
         Log.d("CreateEvent", name);
         slotId = intent.getIntExtra("slotId", -1);
+        String doctor = intent.getStringExtra("doctor");
 
         final TextView text = (TextView) findViewById(R.id.event_text);
-        text.setText(name);
+        text.setText(name + "\nWith " + doctor);
+
+        toolbar = getSupportActionBar();
+        toolbar.setTitle("Schedule Appointment");
+
     }
     int slotId;
 
