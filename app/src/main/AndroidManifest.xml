@@ -16,7 +16,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".ScheduleAppointment" />
-        <activity android:name=".CreateEvent"></activity>
+        <activity android:name=".CreateEvent" />
+        <activity
+            android:name=".JaroSandbox"
+            android:label="@string/title_activity_jaro_sandbox"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

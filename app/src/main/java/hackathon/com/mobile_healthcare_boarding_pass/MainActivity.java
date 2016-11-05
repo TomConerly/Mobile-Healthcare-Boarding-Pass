@@ -19,4 +19,10 @@ public class MainActivity extends AppCompatActivity {
         myIntent.putExtra("key", "test"); //Optional parameters
         startActivity(myIntent);
     }
+
+    public void switchToJaro(View view) {
+        Intent myIntent = new Intent(this, JaroSandbox.class);
+        // myIntent.putExtra("key", "test"); //Optional parameters
+        startActivity(myIntent);
+    }
 }

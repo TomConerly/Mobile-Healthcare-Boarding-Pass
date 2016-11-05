@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Mobile-Healthcare-Boarding-Pass</string>
+    <string name="title_activity_jaro_sandbox">JaroSandbox</string>
 </resources>
