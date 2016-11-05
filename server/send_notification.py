@@ -10,11 +10,10 @@ def sendMessage(message, to):
     }
     data = {
         'to': to,
-        'notification': {
-            'title' : 'Health Boarding Pass',
-            'body' : message
+        'data': {
+            'message': message,
+            'uber': 'yes'
         }
     }
     response = requests.post(URL, data=json.dumps(data), headers=headers);
     return response;
-
