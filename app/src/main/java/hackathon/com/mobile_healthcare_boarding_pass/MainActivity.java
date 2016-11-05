@@ -4,8 +4,16 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
+import java.util.Date;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,20 +40,23 @@ public class MainActivity extends AppCompatActivity {
     private void initializeAppointmentList() {
         ListView appointment_list = (ListView)findViewById(R.id.appointment_list);
 
-        String[] values = new String[] { "Android List View",
-                "Adapter implementation",
-                "Simple List View In Android",
-                "Create List View Android",
-                "Android Example",
-                "List View Source Code",
-                "List View Array Adapter",
-                "Android Example List View"
+
+        List<Server.Slot> slots = Server.getInstance().getMyAppointments(1337);
+
+
+        ArrayAdapter<Server.Slot> adapter = new ArrayAdapter<Server.Slot>(this, R.layout.appointment_slot, slots) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View res = getLayoutInflater().inflate(R.layout.appointment_slot, null);
+                TextView appointment_name = (TextView)res.findViewById(R.id.appointment_name);
+                TextView appointment_time = (TextView)res.findViewById(R.id.appointment_time);
+                Server.Slot slot = getItem(position);
+                appointment_name.setText("Appointment with " + slot.doctor);
+                String eta = Utils.pretty_print_duration(slot.expectedStartTime.getTime() - (new Date()).getTime());
+                appointment_time.setText(eta);
+                return res;
+            }
         };
-
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
-
 
         // Assign adapter to ListView
         appointment_list.setAdapter(adapter);
