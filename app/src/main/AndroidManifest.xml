@@ -20,7 +20,8 @@
         <activity
             android:name=".JaroSandbox"
             android:label="@string/title_activity_jaro_sandbox"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".EventActivity"></activity>
     </application>
 
 </manifest>

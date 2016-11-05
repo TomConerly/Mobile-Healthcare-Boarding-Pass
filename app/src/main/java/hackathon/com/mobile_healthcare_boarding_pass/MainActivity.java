@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         List<Server.Slot> slots = Server.getInstance().getMyAppointments(1337);
 
 
-        ArrayAdapter<Server.Slot> adapter = new ArrayAdapter<Server.Slot>(this, R.layout.appointment_slot, slots) {
+        final ArrayAdapter<Server.Slot> adapter = new ArrayAdapter<Server.Slot>(this, R.layout.appointment_slot, slots) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View res = getLayoutInflater().inflate(R.layout.appointment_slot, null);
@@ -72,5 +73,19 @@ public class MainActivity extends AppCompatActivity {
 
         // Assign adapter to ListView
         appointment_list.setAdapter(adapter);
+
+        final MainActivity act = this;
+        appointment_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                Server.Slot slot = adapter.getItem(position);
+
+                Intent myIntent = new Intent(act, EventActivity.class);
+                myIntent.putExtra("slotId", slot.slotId);
+                myIntent.putExtra("doctor", slot.doctor);
+                startActivity(myIntent);
+            }
+        });
     }
 }

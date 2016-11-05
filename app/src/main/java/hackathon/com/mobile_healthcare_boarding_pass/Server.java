@@ -94,6 +94,15 @@ public class Server {
             s.scheduledEndTime = c.getTime();
             c.add(Calendar.MINUTE, 5);
             s.expectedEndTime = c.getTime();
+            if (i == 2) {
+                c = Calendar.getInstance(Locale.getDefault());
+                c.setTime(s.expectedStartTime);
+                c.add(Calendar.HOUR, 2);
+                s.expectedStartTime = c.getTime();
+                c.setTime(s.expectedEndTime);
+                c.add(Calendar.HOUR, 2);
+                s.expectedEndTime = c.getTime();
+            }
             s.doctor = "Doctor Mc. Doctorface";
             s.patientId = 1337;
             s.slotId = i + numOtherSlots;
