@@ -13,4 +13,23 @@
     tools:context="hackathon.com.mobile_healthcare_boarding_pass.JaroSandbox"
     tools:showIn="@layout/activity_jaro_sandbox">
 
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="Get Token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button2"
+            android:onClick="showNotification" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView2" />
+    </LinearLayout>
+
 </RelativeLayout>

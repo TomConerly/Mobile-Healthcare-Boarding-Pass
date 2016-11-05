@@ -10,11 +10,4 @@
     <include layout="@layout/content_jaro_sandbox"
         android:id="@+id/include" />
 
-    <Button
-        android:text="Button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:elevation="0dp" />
-
 </android.support.design.widget.CoordinatorLayout>
