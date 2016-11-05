@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 import sys
 import json
+import send_notification
 
 lock = threading.Lock()
 
@@ -13,13 +14,21 @@ FREE = -1
 BOOKED = -2
 
 slots = {}
+patients = {}
 
 class Patient(object):
-    pass
+    def __init__(self, patientId):
+        self.patientId = patientId
+        self.token = ''
+
+    def notify(message):
+        if token != '':
+            send_notification.sendMessage(message, token)
 
 class Request(object):
     def __init__(self, j):
         self.__dict__ = json.loads(j.decode("utf-8"))
+
 
 class MyTCPHandler(socketserver.BaseRequestHandler):
     """
@@ -29,6 +38,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     override the handle() method to implement communication to the
     client.
     """
+    def reply(self, response):
+        self.request.sendall(bytes(json.dumps(response), 'utf-8'))
 
     def handle(self):
         data = self.request.recv(1024).strip()
@@ -41,31 +52,64 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         print("action: ", request.action)
         if request.action == 'book':
             with lock:
-                book_attempt(request.patientId, request.slotId)
+                response = bookAttempt(request.patientId, request.slotId)
+            if response:
+                self.request.sendall(bytes("Booked successfully!\n", 'utf-8'))
+            else:
+                self.request.sendall(bytes("Appointment not available.\n", 'utf-8'))
         elif request.action == 'list':
             with lock:
                 all_list = slots.values()
+            result = []
+            for x in all_list:
+                result.append(x.toJSON(request.patientId))
+            self.request.sendall(bytes(json.dumps(result), 'utf-8'))
         elif request.action == 'test':
-            self.reply({"test": "siemanko"})
+            self.reply({"test": "asa"})
+        elif request.action == 'cancel':
+            with lock:
+                response = cancelAttempt(request.patientId, request.slotId)
+            if response:
+                self.request.sendall(bytes("Cancelled successfully!\n", 'utf-8'))
+                with lock:
+                    for slot in getInterestedSlots(request.slotId):
+                        if slot.patientId in patients:
+                            patients[slot.patientId].notify('Earlier appointment became available!')
+            else:
+                self.request.sendall(bytes("Cancellation failed.\n", 'utf-8'))
+        elif request.action == 'setToken':
+            if request.patientId not in patients:
+                patients[request.patientId] = Patient(request.patientId)
+            patients[request.patientId].token = request.token
 
-    def reply(self, response):
-        self.request.sendall(bytes(json.dumps(response), 'utf-8'))
+def delaySlot(slotId, newStartTime, newEndTime):
+    patientId = slots[slotId].patientId
+    if patientId in patients:
+        patients[patientId].notify('Your appointment has been delayed. Please confirm new start time in the app.')
+    slots[slotId].expectedStartTime = newStartTime
+    slots[slotId].expectedEndTime = newEndTime
 
-
-def server_thread():
+def serverThread():
     HOST, PORT = '', 12345
     server = socketserver.TCPServer((HOST, PORT), MyTCPHandler)
     server.serve_forever()
 
-def tick_loop_thread():
+def tickLoopThread():
     while True:
         time.sleep(1)
 
-def book_attempt(patientId, slotId):
+def bookAttempt(patientId, slotId):
     slot = slots[slotId]
     if not slot.isFree():
         return False
     slot.assignPatient(patientId)
+    return True
+
+def cancelAttempt(patientId, slotId):
+    slot = slots[slotId]
+    if slot.patientId != patientId:
+        return False
+    slot.patientId = FREE
     return True
 
 def isPatientId(x):
@@ -113,9 +157,9 @@ class Slot(object):
 
 
 if __name__ == "__main__":
-    t_server = threading.Thread(target=server_thread)
+    t_server = threading.Thread(target=serverThread)
     t_server.start()
-    t_tick_loop = threading.Thread(target=tick_loop_thread)
+    t_tick_loop = threading.Thread(target=tickLoopThread)
     t_tick_loop.start()
     s = Slot(datetime.now(), datetime.now())
     print(s.toJSON(0))
