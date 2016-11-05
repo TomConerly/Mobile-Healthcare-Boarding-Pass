@@ -3,7 +3,7 @@ import socketserver
 import time
 import copy
 import json
-import datetime
+from datetime import datetime, timedelta
 import sys
 import json
 import send_notification
@@ -44,13 +44,8 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
 
     def handle(self):
         data = self.request.recv(1024).strip()
-        with lock:
-            print("Connection from {}", self.client_address[0])
-            sys.stdout.flush()
 
         request = Request(data)
-
-        print("action: ", request.action)
 
         if request.action == 'list_slots':
             with lock:
@@ -72,10 +67,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 response = cancelAttempt(request.patientId, request.slotId)
             if response:
                 self.reply({"success": 1})
-                with lock:
-                    for slot in getInterestedSlots(request.slotId):
-                        if slot.patientId in patients:
-                            patients[slot.patientId].notify('Earlier appointment became available!')
             else:
                 self.reply({"success": 0})
         elif request.action == 'setToken':
@@ -83,12 +74,20 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
                 patients[request.patientId] = Patient(request.patientId)
             patients[request.patientId].token = request.token
 
+def getInterestedSlots(slot):
+    result = []
+    for s in slots.values():
+        if not s.isFree() and s.expectedStartTime > slot.expectedStartTime:
+            result.append(s)
+    return result
+
 def delaySlot(slotId, newStartTime, newEndTime):
     patientId = slots[slotId].patientId
     if patientId in patients:
         patients[patientId].notify('Your appointment has been delayed. Please confirm new start time in the app.')
     slots[slotId].expectedStartTime = newStartTime
     slots[slotId].expectedEndTime = newEndTime
+    slots[slotId].reminded = False
 
 def serverThread():
     HOST, PORT = '', 12345
@@ -97,7 +96,14 @@ def serverThread():
 
 def tickLoopThread():
     while True:
-        time.sleep(1)
+        time.sleep(10)
+        future = datetime.now() + timedelta(minutes=30)
+        with lock:
+            for slot in slots.values():
+                if not slot.isFree() and not slot.reminded and slot.expectedStartTime < future:
+                    if slot.patientId in patients:
+                        patients[slot.patientId].notify('Your appointment is starting in less than 30 minutes.')
+                        slot.reminded = True
 
 def bookAttempt(patientId, slotId):
     slot = slots[slotId]
@@ -111,6 +117,9 @@ def cancelAttempt(patientId, slotId):
     if slot.patientId != patientId:
         return False
     slot.patientId = FREE
+    for s in getInterestedSlots(slot):
+        if s.patientId in patients:
+            patients[s.patientId].notify('Earlier appointment became available!')
     return True
 
 def isPatientId(x):
@@ -132,6 +141,7 @@ class Slot(object):
         self.scheduledEndTime = scheduledEndTime
         self.expectedEndTime = scheduledEndTime
         self.provider = 'Doctor Mc. Doctorface'
+        self.reminded = False
 
     def isFree(self):
         return self.patientId == FREE
@@ -160,8 +170,8 @@ def addSlot(s):
     slots[s.slotId] = s
 
 def initSlots():
-    halfhour = datetime.timedelta(minutes=30)
-    t = datetime.datetime(2016, 11, 5, 18)
+    halfhour = timedelta(minutes=30)
+    t = datetime(2016, 11, 5, 18)
     s = Slot(t, t + halfhour)
     s.expectedStartTime += halfhour
     s.expectedEndTime += halfhour
@@ -170,20 +180,19 @@ def initSlots():
 
     random.seed(10)
     for i in range(10):
-        t = datetime.datetime(2016, 11, 15 + random.randrange(15), random.randrange(9, 18))
+        t = datetime(2016, 11, 15 + random.randrange(15), random.randrange(9, 18))
         s = Slot(t, t + halfhour)
         s.patientId = FREE
         slots[s.slotId] = s
 
     for i in range(10):
-        t = datetime.datetime(2016, 11, 5 + random.randrange(20), random.randrange(9, 18))
+        t = datetime(2016, 11, 5 + random.randrange(20), random.randrange(9, 18))
         s = Slot(t, t + halfhour)
         s.patientId = BOOKED
         slots[s.slotId] = s
 
-if __name__ == "__main__":
-    initSlots()
-    t_server = threading.Thread(target=serverThread)
-    t_server.start()
-    t_tick_loop = threading.Thread(target=tickLoopThread)
-    t_tick_loop.start()
+initSlots()
+t_server = threading.Thread(target=serverThread)
+t_server.start()
+t_tick_loop = threading.Thread(target=tickLoopThread)
+t_tick_loop.start()

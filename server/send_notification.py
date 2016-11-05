@@ -12,7 +12,7 @@ def sendMessage(message, to, uber=False):
         'to': to,
         'data': {
             'message': message,
-            'uber': (uber?'true':'false')
+            'uber': 'false'
         }
     }
     response = requests.post(URL, data=json.dumps(data), headers=headers);

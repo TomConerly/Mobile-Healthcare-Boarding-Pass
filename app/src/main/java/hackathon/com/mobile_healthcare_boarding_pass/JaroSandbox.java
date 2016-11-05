@@ -37,6 +37,7 @@ public class JaroSandbox extends AppCompatActivity {
         EditText et = (EditText)findViewById(R.id.patiendIdBox);
         TextView tv = (TextView)findViewById(R.id.textView2);
         UserData.patientId = Integer.parseInt(et.getText().toString());
+        Constants.PATIENT_ID = UserData.patientId;
         String myToken = FirebaseInstanceId.getInstance().getToken();
         JSONObject obj = null;
         try {
