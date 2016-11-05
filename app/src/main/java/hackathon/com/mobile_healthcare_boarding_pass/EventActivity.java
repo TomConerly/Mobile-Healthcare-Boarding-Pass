@@ -47,8 +47,19 @@ public class EventActivity extends AppCompatActivity {
         final TextView text = (TextView) findViewById(R.id.event_text);
         String content = "Your appointment is with " + slot.doctor +".";
         content += "\nScheduled start time: " + dateFormatForDisplaying.format(slot.scheduledStartTime);
-        if (slot.scheduledStartTime.compareTo(slot.expectedStartTime) != 0)
-            content += "\nExpected start time: " + dateFormatForDisplaying.format(slot.expectedStartTime);
+        if (slot.scheduledStartTime.compareTo(slot.expectedStartTime) != 0) {
+            long expected_time = slot.expectedStartTime.getTime();
+            long scheduled_time = slot.scheduledStartTime.getTime();
+            long diff = Math.abs(expected_time - scheduled_time);
+            if (diff > 60 * 1000) {
+                if (scheduled_time < expected_time) {
+                    content += "\nDelayed by " + Utils.pretty_print_duration(diff);
+                } else {
+                    content += "\n"  + Utils.pretty_print_duration(diff) + " earlier";
+
+                }
+            }
+        }
         text.setText(content);
 
         initializeAppointmentList();
