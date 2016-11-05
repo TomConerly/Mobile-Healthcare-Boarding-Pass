@@ -39,7 +39,4 @@ public class CreateEvent extends AppCompatActivity {
         myIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(myIntent);
     }
-    public void back(View view) {
-        finish();
-    }
 }
