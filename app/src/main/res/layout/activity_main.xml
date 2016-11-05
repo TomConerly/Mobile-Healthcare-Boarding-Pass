@@ -22,15 +22,28 @@
             android:layout_weight="1"
             android:id="@+id/appointment_list" />
 
-        <Button
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:text="Schedule"
-            android:onClick="schedule"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/schedule_button"
-            android:layout_alignParentEnd="true"/>
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_height="match_parent"
+                android:layout_width="0dip"
+                android:text="Schedule"
+                android:onClick="schedule"
+                android:id="@+id/schedule_button"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_height="match_parent"
+                android:text="JARO"
+                android:layout_width="0dip"
+                android:id="@+id/jaro_button"
+                android:layout_weight="1"
+                android:onClick="switchToJaro" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>
