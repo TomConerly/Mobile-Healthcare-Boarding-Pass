@@ -2,6 +2,7 @@ package hackathon.com.mobile_healthcare_boarding_pass;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +29,11 @@ public class NotificationService extends FirebaseMessagingService {
             builder.setContentTitle("Health Boarding Pass")
                     .setContentText(remoteMessage.getData().get("message"))
                     .setSmallIcon(R.drawable.notification_icon);
+
+            if(remoteMessage.getData().get("uber") != null && remoteMessage.getData().get("uber").equals("true")) {
+                builder.addAction(R.drawable.notification_icon, "Order Uber",
+                        PendingIntent.getActivity(this, 1, new Intent(this, MainActivity.class), PendingIntent.FLAG_ONE_SHOT));
+            }
         }
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(0, builder.build());
