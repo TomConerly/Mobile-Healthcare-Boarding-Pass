@@ -52,11 +52,11 @@ public class ScheduleAppointment extends AppCompatActivity {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                Object o = bookingsListView.getItemAtPosition(position);
-                android.util.Log.d("click", String.format("position %d", position));
+                String s = (String)bookingsListView.getItemAtPosition(position);
+                android.util.Log.d("click", String.format("position %d name %s", position, s));
 
                 Intent myIntent = new Intent(act, CreateEvent.class);
-                myIntent.putExtra("key", "test"); //Optional parameters
+                myIntent.putExtra("name", s);
                 act.startActivity(myIntent);
             }
         });
@@ -109,7 +109,7 @@ public class ScheduleAppointment extends AppCompatActivity {
         });
 
         // uncomment below to show indicators above small indicator events
-        // compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(true);
+        compactCalendarView.shouldDrawIndicatorsBelowSelectedDays(true);
 
         // uncomment below to open onCreate
         //openCalendarOnCreate(v);
