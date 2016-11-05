@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="hackathon.com.mobile_healthcare_boarding_pass">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +24,10 @@
             android:label="@string/title_activity_jaro_sandbox"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".EventActivity"></activity>
+        <activity
+            android:name=".ConnectExampleActivity"
+            android:label="ConnectExampleActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

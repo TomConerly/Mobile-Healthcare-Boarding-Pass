@@ -44,6 +44,14 @@
                 android:id="@+id/jaro_button"
                 android:layout_weight="1"
                 android:onClick="switchToJaro" />
+
+            <Button
+                android:layout_height="match_parent"
+                android:text="CONNECT"
+                android:layout_width="0dip"
+                android:id="@+id/connect_example_button"
+                android:layout_weight="1"
+                android:onClick="switchToConnectExample" />
         </LinearLayout>
 
     </LinearLayout>

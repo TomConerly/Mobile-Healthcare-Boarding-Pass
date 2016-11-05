@@ -29,7 +29,10 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
     """
 
     def handle(self):
-        self.data = self.request.recv(32768).strip()
+        self.data = self.request.recv(1024).strip()
+        with lock:
+            print("Connection from {}", self.client_address[0])
+        self.request.sendall(bytes("siemanko\n", 'utf-8'))
         request = Request(self.data)
         if request.action == 'book':
             with lock:
@@ -37,13 +40,6 @@ class MyTCPHandler(socketserver.BaseRequestHandler):
         elif request.action == 'list':
             with lock:
                 all_list = slots.values()
-        #print("{} wrote:".format(self.client_address[0]))
-        #print(self.data)
-        # just send back the same data, but upper-cased
-        #self.request.sendall(self.data.upper())
-        #with lock:
-        #    print("Connection from {}", self.client_address[0])
-        #self.request.sendall(bytes("siemanko\n", 'utf-8'))
 
 def server_thread():
     HOST, PORT = '', 12345
@@ -107,6 +103,7 @@ class Slot(object):
 
 if __name__ == "__main__":
     t_server = threading.Thread(target=server_thread)
+    t_server.daemon = True
     t_server.start()
     t_tick_loop = threading.Thread(target=tick_loop_thread)
     t_tick_loop.start()

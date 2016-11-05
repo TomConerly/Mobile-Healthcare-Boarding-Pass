@@ -52,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(myIntent);
     }
 
+    public void switchToConnectExample(View view) {
+        Intent myIntent = new Intent(this, ConnectExampleActivity.class);
+        // myIntent.putExtra("key", "test"); //Optional parameters
+        startActivity(myIntent);
+    }
+
+
     private void initializeAppointmentList() {
         ListView appointment_list = (ListView)findViewById(R.id.appointment_list);
 
