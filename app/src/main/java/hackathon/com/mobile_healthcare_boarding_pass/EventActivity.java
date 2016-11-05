@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import android.view.View;
 
 public class EventActivity extends AppCompatActivity {
     private ActionBar toolbar;
@@ -36,5 +37,8 @@ public class EventActivity extends AppCompatActivity {
         if (slot.scheduledStartTime.compareTo(slot.expectedStartTime) != 0)
             content += " The expected start time is " + dateFormatForDisplaying.format(slot.expectedStartTime)+ ".";
         text.setText(content);
+    }
+    public void swapCheckBox(View view) {
+        Log.d("eventactivity", "swapCheckBox");
     }
 }
