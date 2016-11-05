@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         my_slots.clear();
                         Server.getInstance().updateSlotsFromServer();
-                        my_slots.addAll(Server.getInstance().getMyAppointments(1337));
+                        my_slots.addAll(Server.getInstance().getMyAppointments(Constants.PATIENT_ID));
                         sortMySlots();
                         my_slots_adapter.notifyDataSetChanged();
                     }
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         my_slots.clear();
         Server.getInstance().updateSlotsFromServer();
-        my_slots.addAll(Server.getInstance().getMyAppointments(1337));
+        my_slots.addAll(Server.getInstance().getMyAppointments(Constants.PATIENT_ID));
         sortMySlots();
         Log.d("siema", "slots: " + my_slots.size());
         my_slots_adapter.notifyDataSetChanged();
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeAppointmentList() {
         ListView appointment_list = (ListView)findViewById(R.id.appointment_list);
         Server.getInstance().updateSlotsFromServer();
-        my_slots = Server.getInstance().getMyAppointments(1337);
+        my_slots = Server.getInstance().getMyAppointments(Constants.PATIENT_ID);
         sortMySlots();
 
         my_slots_adapter = new ArrayAdapter<Server.Slot>(this, R.layout.appointment_slot, my_slots) {

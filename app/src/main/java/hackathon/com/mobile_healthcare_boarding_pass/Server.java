@@ -31,7 +31,7 @@ public class Server {
         try {
             obj = new JSONObject();
             obj.put("action", "list_slots");
-            obj.put("patientId", 1337);
+            obj.put("patientId", Constants.PATIENT_ID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -172,7 +172,7 @@ public class Server {
                 s.expectedEndTime = c.getTime();
             }
             s.doctor = "Doctor Mc. Doctorface";
-            s.patientId = 1337;
+            s.patientId = Constants.PATIENT_ID;
             s.slotId = i + numOtherSlots;
             allSlots.add(s);
         }

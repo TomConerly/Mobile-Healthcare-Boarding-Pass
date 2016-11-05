@@ -34,7 +34,7 @@ public class CreateEvent extends AppCompatActivity {
 
     public void book(View view) {
         Server s = Server.getInstance();
-        s.takeAppointment(slotId, 1337);
+        s.takeAppointment(slotId, Constants.PATIENT_ID);
         Intent myIntent = new Intent(this, MainActivity.class);
         myIntent.addFlags(android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP | android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(myIntent);

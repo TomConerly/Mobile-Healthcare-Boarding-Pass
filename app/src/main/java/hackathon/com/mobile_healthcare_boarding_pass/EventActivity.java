@@ -36,7 +36,7 @@ public class EventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         int slotId = intent.getIntExtra("slotId", -1);
         Server server = Server.getInstance();
-        List<Server.Slot> apts = server.getMyAppointments(1337);
+        List<Server.Slot> apts = server.getMyAppointments(Constants.PATIENT_ID);
         for (Server.Slot s : apts)
             if (s.slotId == slotId)
                 slot = s;
@@ -89,7 +89,7 @@ public class EventActivity extends AppCompatActivity {
         Log.d("tconerly", String.format("checked %d %d", position, checked ? 1 : 0));
     }
     public void cancel(View view) {
-        Server.getInstance().cancel(slot.slotId, 1337);
+        Server.getInstance().cancel(slot.slotId, Constants.PATIENT_ID);
         finish();
     }
 
