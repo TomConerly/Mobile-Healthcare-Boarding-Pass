@@ -1,5 +1,8 @@
 package hackathon.com.mobile_healthcare_boarding_pass;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
@@ -53,6 +56,8 @@ public class Server {
         }
         return false;
     }
+
+
 
     private static Server instance = null;
     private static boolean useRealServer = false;
@@ -115,5 +120,22 @@ public class Server {
             instance = new Server();
         }
         return instance;
+    }
+
+    private Slot parseSlot(JSONObject obj) {
+        try {
+            Slot slot = new Slot();
+            slot.slotId = obj.getInt("slotId");
+            slot.patientId = obj.getInt("patientId");
+            slot.scheduledStartTime = new Date(obj.getLong("scheduledStartDate"));
+            slot.expectedStartTime = new Date(obj.getLong("expectedStartTime"));
+            slot.scheduledEndTime = new Date(obj.getLong("scheduledEndTime"));
+            slot.expectedEndTime = new Date(obj.getLong("expectedEndTime"));
+            slot.doctor = obj.getString("doctor");
+            return slot;
+        } catch (JSONException e) {
+            return null;
+        }
+
     }
 }
